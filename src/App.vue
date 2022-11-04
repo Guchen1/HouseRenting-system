@@ -1,85 +1,50 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div style="height: 100%; width: 100%">
+    <el-container style="height: 100%">
+      <el-header class="header">
+        <div class="center">房屋租赁管理系统</div>
+        <el-button type="success" class="right">登录</el-button>
+      </el-header>
+      <el-container style="height: 100%">
+        <el-aside style="height: 100%" width="200px">
+          <el-menu default-active="/" style="height: 100%" router>
+            <el-menu-item index="/" class="menucenter">
+              <el-icon><Edit /></el-icon>
+              <span>房主信息登记</span>
+            </el-menu-item>
+            <el-menu-item index="/about" class="menucenter">
+              <el-icon><icon-menu /><Menu /></el-icon>
+              <span>房屋信息登记</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
+        <el-main style="height: 100%"><RouterView /></el-main>
+      </el-container>
+    </el-container>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.center {
+  line-height: 60px;
+  padding-left: 40px;
+  display: inline;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.header {
+  background-color: var(--el-color-primary);
+  color: #fff;
+  border-bottom: 2px solid rgb(197, 197, 197);
 }
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.right {
+  float: right;
+  margin-top: 13px;
+  margin-right: 5%;
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.menucenter {
+  justify-content: space-evenly;
 }
 </style>

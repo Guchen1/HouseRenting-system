@@ -1,5 +1,5 @@
 <template>
-  <div class="about">sss</div>
+  <div>not found</div>
 </template>
 
 <style></style>

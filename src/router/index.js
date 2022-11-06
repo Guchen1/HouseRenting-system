@@ -6,12 +6,42 @@ const router = createRouter({
     {
       path: "/",
       name: "Home",
-      component: () => import("../views/HomeView.vue"),
+      component: () => import("../views/MainView.vue"),
     },
     {
-      path: "/about",
-      name: "About",
-      component: () => import("../views/AboutView.vue"),
+      path: "/owner",
+      name: "Owner",
+      component: () => import("../views/OwnerView.vue"),
+    },
+    {
+      path: "/house",
+      name: "House",
+      component: () => import("../views/HouseView.vue"),
+    },
+    {
+      path: "/tenant",
+      name: "Tenant",
+      component: () => import("../views/TenantView.vue"),
+    },
+    {
+      path: "/rent",
+      name: "Rent",
+      component: () => import("../views/RentView.vue"),
+    },
+    {
+      path: "/state",
+      name: "State",
+      component: () => import("../views/StateView.vue"),
+    },
+    {
+      path: "/charge",
+      name: "Charge",
+      component: () => import("../views/ChargeView.vue"),
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("../views/NotFoundView.vue"),
     },
   ],
 });

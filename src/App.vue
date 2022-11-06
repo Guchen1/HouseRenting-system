@@ -1,5 +1,16 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView, useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+const identity = ref(null);
+const router = useRouter();
+const route = useRoute();
+onMounted(() => {
+  if (identity.value === "owner") {
+    router.push("/owner");
+  } else if (identity.value === "tenant") {
+    router.push("/tenant");
+  }
+});
 </script>
 
 <template>
@@ -10,15 +21,31 @@ import { RouterLink, RouterView } from "vue-router";
         <el-button type="success" class="right">登录</el-button>
       </el-header>
       <el-container style="height: 100%">
-        <el-aside style="height: 100%" width="200px">
-          <el-menu default-active="/" style="height: 100%" router>
-            <el-menu-item index="/" class="menucenter">
+        <el-aside style="height: 100%" width="200px" v-if="route.path != '/'">
+          <el-menu :default-active="route.path" style="height: 100%" router>
+            <el-menu-item index="/owner" class="menucenter">
               <el-icon><Edit /></el-icon>
               <span>房主信息登记</span>
             </el-menu-item>
-            <el-menu-item index="/about" class="menucenter">
-              <el-icon><icon-menu /><Menu /></el-icon>
+            <el-menu-item index="/house" class="menucenter">
+              <el-icon><Menu /></el-icon>
               <span>房屋信息登记</span>
+            </el-menu-item>
+            <el-menu-item index="/tenant" class="menucenter">
+              <el-icon><Menu /></el-icon>
+              <span>租赁者信息登记</span>
+            </el-menu-item>
+            <el-menu-item index="/rent" class="menucenter">
+              <el-icon><Menu /></el-icon>
+              <span>房屋租赁</span>
+            </el-menu-item>
+            <el-menu-item index="/state" class="menucenter">
+              <el-icon><Menu /></el-icon>
+              <span>房屋状态变更</span>
+            </el-menu-item>
+            <el-menu-item index="/charge" class="menucenter">
+              <el-icon><Menu /></el-icon>
+              <span>手续费缴纳</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -33,6 +60,8 @@ import { RouterLink, RouterView } from "vue-router";
   line-height: 60px;
   padding-left: 40px;
   display: inline;
+
+  user-select: none;
 }
 .header {
   background-color: var(--el-color-primary);
@@ -44,7 +73,11 @@ import { RouterLink, RouterView } from "vue-router";
   margin-top: 13px;
   margin-right: 5%;
 }
-.menucenter {
-  justify-content: space-evenly;
+
+span {
+  user-select: none;
+  width: 100%;
+  justify-content: center;
+  display: flex;
 }
 </style>

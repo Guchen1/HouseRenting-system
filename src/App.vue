@@ -1,7 +1,7 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
-const identity = ref(null);
+const identity = ref("tenant");
 const router = useRouter();
 const route = useRoute();
 onMounted(() => {
@@ -23,27 +23,51 @@ onMounted(() => {
       <el-container style="height: 100%">
         <el-aside style="height: 100%" width="200px" v-if="route.path != '/'">
           <el-menu :default-active="route.path" style="height: 100%" router>
-            <el-menu-item index="/owner" class="menucenter">
+            <el-menu-item
+              index="/owner"
+              v-if="identity == 'owner'"
+              class="menucenter"
+            >
               <el-icon><Edit /></el-icon>
-              <span>房主信息登记</span>
+              <span>信息修改</span>
             </el-menu-item>
-            <el-menu-item index="/house" class="menucenter">
+            <el-menu-item
+              index="/house"
+              v-if="identity == 'owner'"
+              class="menucenter"
+            >
               <el-icon><Menu /></el-icon>
               <span>房屋信息登记</span>
             </el-menu-item>
-            <el-menu-item index="/tenant" class="menucenter">
+            <el-menu-item
+              index="/tenant"
+              v-if="identity == 'tenant'"
+              class="menucenter"
+            >
               <el-icon><Menu /></el-icon>
-              <span>租赁者信息登记</span>
+              <span>信息登记</span>
             </el-menu-item>
-            <el-menu-item index="/rent" class="menucenter">
+            <el-menu-item
+              index="/rent"
+              v-if="identity == 'tenant'"
+              class="menucenter"
+            >
               <el-icon><Menu /></el-icon>
               <span>房屋租赁</span>
             </el-menu-item>
-            <el-menu-item index="/state" class="menucenter">
+            <el-menu-item
+              index="/state"
+              v-if="identity == 'owner'"
+              class="menucenter"
+            >
               <el-icon><Menu /></el-icon>
               <span>房屋状态变更</span>
             </el-menu-item>
-            <el-menu-item index="/charge" class="menucenter">
+            <el-menu-item
+              index="/charge"
+              v-if="identity == 'owner'"
+              class="menucenter"
+            >
               <el-icon><Menu /></el-icon>
               <span>手续费缴纳</span>
             </el-menu-item>

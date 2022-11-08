@@ -1,17 +1,21 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
-
+import { ref, onMounted, Transition } from "vue";
+import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
-const identity = ref(null);
+const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const sideshow = ref(false);
 onMounted(() => {
-  if (identity.value === "owner") {
-    router.push("/owner");
-  } else if (identity.value === "tenant") {
-    router.push("/tenant");
-  }
+  if (store.logged)
+    if (store.identity === "owner") {
+      sideshow.value = true;
+      router.push("/owner");
+    } else if (store.identity === "tenant") {
+      sideshow.value = true;
+      router.push("/tenant");
+    }
 });
 const options = {
   background: {
@@ -90,7 +94,29 @@ const options = {
   },
   detectRetina: true,
 };
-
+const back = () => {
+  router.push("/");
+  bdsiabled.value = true;
+  store.logged = false;
+  sideshow.value = false;
+  setTimeout(() => {
+    store.identity = null;
+    bdsiabled.value = false;
+  }, 500);
+};
+const go = (path) => {
+  store.logged = true;
+  store.identity = path;
+  router.push("/" + path);
+  bdsiabled.value = true;
+  setTimeout(() => {
+    sideshow.value = true;
+  }, 250);
+  setTimeout(() => {
+    bdsiabled.value = false;
+  }, 500);
+};
+const bdsiabled = ref(false);
 async function particlesInit(engine) {
   await loadFull(engine);
 }
@@ -98,74 +124,102 @@ async function particlesInit(engine) {
 
 <template>
   <div style="height: 100%; width: 100%">
+    <Transition
+      :duration="500"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <Particles
+        v-if="route.path == '/'"
+        id="tsparticles"
+        :particlesInit="particlesInit"
+        :options="options"
+    /></Transition>
     <el-container style="height: 100%">
       <el-header class="header">
         <div class="center">房屋租赁管理系统</div>
-        <el-button type="success" class="right" v-if="route.path == '/'"
+        <el-button
+          type="success"
+          @click="go('owner')"
+          class="right"
+          v-if="!store.logged"
+          :disabled="bdsiabled"
           >登录</el-button
         >
-        <el-button type="danger" class="right" v-else>注销</el-button>
+        <el-button
+          type="danger"
+          class="right"
+          @click="back"
+          :disabled="bdsiabled"
+          v-else
+          >注销</el-button
+        >
       </el-header>
       <el-container style="height: 100%">
-        <el-aside style="height: 100%" width="200px" v-if="route.path != '/'">
-          <el-menu :default-active="route.path" style="height: 100%" router>
-            <el-menu-item
-              index="/owner"
-              v-if="identity == 'owner'"
-              class="menucenter"
-            >
-              <el-icon><Edit /></el-icon>
-              <span>信息修改</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/house"
-              v-if="identity == 'owner'"
-              class="menucenter"
-            >
-              <el-icon><Menu /></el-icon>
-              <span>房屋信息登记</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/tenant"
-              v-if="identity == 'tenant'"
-              class="menucenter"
-            >
-              <el-icon><Menu /></el-icon>
-              <span>信息登记</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/rent"
-              v-if="identity == 'tenant'"
-              class="menucenter"
-            >
-              <el-icon><Menu /></el-icon>
-              <span>房屋租赁</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/state"
-              v-if="identity == 'owner'"
-              class="menucenter"
-            >
-              <el-icon><Menu /></el-icon>
-              <span>房屋状态变更</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/charge"
-              v-if="identity == 'owner'"
-              class="menucenter"
-            >
-              <el-icon><Menu /></el-icon>
-              <span>手续费缴纳</span>
-            </el-menu-item>
-          </el-menu>
-        </el-aside>
+        <Transition
+          :duration="250"
+          enter-active-class="animate__animated animate__lightSpeedInLeft"
+          leave-active-class="animate__animated animate__slideOutLeft"
+        >
+          <el-aside style="height: 100%" width="200px" v-if="sideshow">
+            <el-menu :default-active="route.path" style="height: 100%" router>
+              <el-menu-item
+                index="/owner"
+                v-if="store.identity == 'owner'"
+                class="menucenter"
+              >
+                <el-icon><Edit /></el-icon>
+                <span>信息修改</span>
+              </el-menu-item>
+              <el-menu-item
+                index="/house"
+                v-if="store.identity == 'owner'"
+                class="menucenter"
+              >
+                <el-icon><Menu /></el-icon>
+                <span>房屋信息登记</span>
+              </el-menu-item>
+              <el-menu-item
+                index="/tenant"
+                v-if="store.identity == 'tenant'"
+                class="menucenter"
+              >
+                <el-icon><Menu /></el-icon>
+                <span>信息登记</span>
+              </el-menu-item>
+              <el-menu-item
+                index="/rent"
+                v-if="store.identity == 'tenant'"
+                class="menucenter"
+              >
+                <el-icon><Menu /></el-icon>
+                <span>房屋租赁</span>
+              </el-menu-item>
+              <el-menu-item
+                index="/state"
+                v-if="store.identity == 'owner'"
+                class="menucenter"
+              >
+                <el-icon><Menu /></el-icon>
+                <span>房屋状态变更</span>
+              </el-menu-item>
+              <el-menu-item
+                index="/charge"
+                v-if="store.identity == 'owner'"
+                class="menucenter"
+              >
+                <el-icon><Menu /></el-icon>
+                <span>手续费缴纳</span>
+              </el-menu-item>
+            </el-menu>
+          </el-aside>
+        </Transition>
         <el-main style="height: 100%">
-          <Particles
-            v-if="route.path == '/'"
-            id="tsparticles"
-            :particlesInit="particlesInit"
-            :options="options" /><RouterView
-        /></el-main>
+          <RouterView v-slot="{ Component }">
+            <Transition mode="out-in" name="el-zoom-in-top"
+              ><component :is="Component" />
+            </Transition> </RouterView
+        ></el-main>
       </el-container>
     </el-container>
   </div>

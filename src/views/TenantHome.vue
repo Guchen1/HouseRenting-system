@@ -1,5 +1,5 @@
 <template>
-  <div>sss</div>
+  <div>Tenant Home</div>
 </template>
 
 <style></style>

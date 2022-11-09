@@ -1,9 +1,13 @@
 <script setup>
 import { reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+import { useAxios } from "../stores/axios";
+import { useStore } from "../stores/user";
 const emit = defineEmits(["exit"]);
 // do not use same name with ref
-const route = useRoute();
+const store = useStore();
+const router = useRouter();
+const axios = useAxios();
 const form = reactive({
   name: "",
   address: "",
@@ -12,6 +16,20 @@ const form = reactive({
   password: "",
 });
 const submit = () => {
+  if (!store.logged)
+    axios.post("/register/tenant", form).then((res) => {
+      if (res.data.status == 200) {
+        store.centershow = false;
+        store.logged = true;
+
+        store.identity = "owner";
+        setTimeout(() => {
+          router.push("/owner");
+        }, 100);
+        emit("exit");
+      }
+    });
+  else axios.post("/updateinfo/tenant", form);
   console.log(form);
 };
 </script>
@@ -28,21 +46,23 @@ const submit = () => {
         <el-input v-model="form.name" />
       </el-form-item>
       <el-form-item label="联系电话"
-        ><el-input v-model="form.address" />
+        ><el-input v-model="form.phone" />
       </el-form-item>
       <el-form-item label="住址">
         <el-input v-model="form.address" />
       </el-form-item>
-      <el-form-item label="账号">
+      <el-form-item v-if="store.centershow" label="账号">
         <el-input v-model="form.username" />
       </el-form-item>
-      <el-form-item label="密码">
+      <el-form-item v-if="store.centershow" label="密码">
         <el-input v-model="form.password" />
       </el-form-item>
     </el-form>
-    <div :class="route.path == '/' ? 'centerbuttons' : ''">
+    <div :class="store.centershow ? 'centerbuttons' : ''">
       <el-button type="primary" @click="submit">提交</el-button
-      ><el-button type="danger" @click="emit('exit')">返回</el-button>
+      ><el-button type="danger" v-if="store.centershow" @click="emit('exit')"
+        >返回</el-button
+      >
     </div>
   </div>
 </template>

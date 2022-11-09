@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
-import { ref, onMounted, Transition } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
 const store = useStore();
@@ -8,14 +8,20 @@ const router = useRouter();
 const route = useRoute();
 const sideshow = ref(false);
 onMounted(() => {
-  if (store.logged)
-    if (store.identity === "owner") {
-      sideshow.value = true;
+  if (store.logged) {
+    if (store.identity === "owner" && route.path == "/") {
       router.push("/owner");
-    } else if (store.identity === "tenant") {
+      store.centershow = false;
       sideshow.value = true;
+    } else if (store.identity === "tenant" && route.path == "/") {
       router.push("/tenant");
+      store.centershow = false;
+      sideshow.value = true;
     }
+  } else {
+    router.push("/");
+    store.centershow = true;
+  }
 });
 const options = {
   background: {
@@ -25,26 +31,12 @@ const options = {
   },
   fpsLimit: 120,
   interactivity: {
-    events: {
-      onClick: {
-        enable: true,
-        mode: "push",
-      },
-      onHover: {
-        enable: true,
-        mode: "repulse",
-      },
-      resize: true,
-    },
     modes: {
       bubble: {
-        distance: 400,
+        distance: 300,
         duration: 2,
         opacity: 0.8,
         size: 40,
-      },
-      push: {
-        quantity: 4,
       },
       repulse: {
         distance: 200,
@@ -96,27 +88,39 @@ const options = {
 };
 const back = () => {
   router.push("/");
-  bdsiabled.value = true;
+  bdisabled.value = true;
   store.logged = false;
   sideshow.value = false;
   setTimeout(() => {
+    store.centershow = true;
+  }, 250);
+  setTimeout(() => {
     store.identity = null;
-    bdsiabled.value = false;
+    bdisabled.value = false;
   }, 500);
 };
 const go = (path) => {
   store.logged = true;
   store.identity = path;
+  store.centershow = false;
   router.push("/" + path);
-  bdsiabled.value = true;
+  bdisabled.value = true;
   setTimeout(() => {
     sideshow.value = true;
   }, 250);
   setTimeout(() => {
-    bdsiabled.value = false;
+    bdisabled.value = false;
   }, 500);
 };
-const bdsiabled = ref(false);
+watch(
+  () => route.path,
+  (path) => {
+    if (path === "/" && store.logged) {
+      router.push("/" + store.identity);
+    }
+  }
+);
+const bdisabled = ref(false);
 async function particlesInit(engine) {
   await loadFull(engine);
 }
@@ -125,32 +129,32 @@ async function particlesInit(engine) {
 <template>
   <div style="height: 100%; width: 100%">
     <Transition
-      :duration="500"
+      :duration="1000"
       enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut"
     >
       <Particles
-        v-if="route.path == '/'"
+        v-if="!store.logged"
         id="tsparticles"
         :particlesInit="particlesInit"
         :options="options"
     /></Transition>
     <el-container style="height: 100%">
       <el-header class="header">
-        <div class="center">房屋租赁管理系统</div>
+        <div class="center">房屋租赁服务系统</div>
         <el-button
           type="success"
           @click="go('owner')"
           class="right"
           v-if="!store.logged"
-          :disabled="bdsiabled"
+          :disabled="bdisabled"
           >登录</el-button
         >
         <el-button
           type="danger"
           class="right"
           @click="back"
-          :disabled="bdsiabled"
+          :disabled="bdisabled"
           v-else
           >注销</el-button
         >
@@ -164,31 +168,25 @@ async function particlesInit(engine) {
           <el-aside style="height: 100%" width="200px" v-if="sideshow">
             <el-menu :default-active="route.path" style="height: 100%" router>
               <el-menu-item
-                index="/owner"
+                :index="store.identity == 'owner' ? '/owner' : '/tenant'"
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Edit /></el-icon>
-                <span>信息修改</span>
+                <el-icon><Menu /></el-icon>
+                <span>主页</span>
               </el-menu-item>
+
               <el-menu-item
-                index="/house"
+                index="/owner/house"
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
                 <el-icon><Menu /></el-icon>
                 <span>房屋信息登记</span>
               </el-menu-item>
+
               <el-menu-item
-                index="/tenant"
-                v-if="store.identity == 'tenant'"
-                class="menucenter"
-              >
-                <el-icon><Menu /></el-icon>
-                <span>信息登记</span>
-              </el-menu-item>
-              <el-menu-item
-                index="/rent"
+                index="/tenant/rent"
                 v-if="store.identity == 'tenant'"
                 class="menucenter"
               >
@@ -196,7 +194,7 @@ async function particlesInit(engine) {
                 <span>房屋租赁</span>
               </el-menu-item>
               <el-menu-item
-                index="/state"
+                index="/owner/state"
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
@@ -204,12 +202,22 @@ async function particlesInit(engine) {
                 <span>房屋状态变更</span>
               </el-menu-item>
               <el-menu-item
-                index="/charge"
+                index="/owner/charge"
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
                 <el-icon><Menu /></el-icon>
                 <span>手续费缴纳</span>
+              </el-menu-item>
+              <el-menu-item
+                :index="
+                  store.identity == 'owner' ? '/owner/info' : '/tenant/info'
+                "
+                v-if="store.identity == 'owner'"
+                class="menucenter"
+              >
+                <el-icon><Edit /></el-icon>
+                <span>信息修改</span>
               </el-menu-item>
             </el-menu>
           </el-aside>

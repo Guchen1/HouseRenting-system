@@ -66,7 +66,6 @@ const vist = ref(false);
   position: absolute;
   left: 50%;
   top: 50%;
-  /* 设置元素的相对于自身的偏移度为负50%(也就是元素自身尺寸的一半)*/
   transform: translate(-50%, -50%);
   margin: 0;
   max-width: 800px;

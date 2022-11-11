@@ -1,12 +1,18 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, reactive } from "vue";
 import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
+import { ElMessage } from "element-plus";
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const loginfo = reactive({
+  username: "",
+  password: "",
+});
 const sideshow = ref(false);
+const vis = ref(false);
 onMounted(() => {
   if (store.logged) {
     if (store.identity === "owner" && route.path == "/") {
@@ -100,17 +106,22 @@ const back = () => {
   }, 500);
 };
 const go = (path) => {
-  store.logged = true;
-  store.identity = path;
-  store.centershow = false;
-  router.push("/" + path);
-  bdisabled.value = true;
-  setTimeout(() => {
-    sideshow.value = true;
-  }, 250);
-  setTimeout(() => {
-    bdisabled.value = false;
-  }, 500);
+  if (loginfo.username == "guchen" && loginfo.password == "123456") {
+    ElMessage.success("登录成功");
+    vis.value = false;
+    store.logged = true;
+    store.identity = path;
+    store.centershow = false;
+    router.push("/" + path);
+    bdisabled.value = true;
+
+    setTimeout(() => {
+      sideshow.value = true;
+    }, 250);
+    setTimeout(() => {
+      bdisabled.value = false;
+    }, 500);
+  } else ElMessage.error("用户名或密码错误");
 };
 watch(
   () => route.path,
@@ -138,18 +149,19 @@ async function particlesInit(engine) {
         id="tsparticles"
         :particlesInit="particlesInit"
         :options="options"
-    /></Transition>
+      />
+    </Transition>
     <el-container style="height: 100%">
       <el-header class="header">
         <div class="center">房屋租赁服务系统</div>
         <el-button
           type="success"
-          @click="go('owner')"
+          @click="vis = true"
           class="right"
           v-if="!store.logged"
           :disabled="bdisabled"
-          >登录</el-button
-        >
+          >登录
+        </el-button>
         <el-button
           type="danger"
           class="right"
@@ -172,7 +184,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Menu /></el-icon>
+                <el-icon>
+                  <Menu />
+                </el-icon>
                 <span>主页</span>
               </el-menu-item>
 
@@ -181,7 +195,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Menu /></el-icon>
+                <el-icon>
+                  <Menu />
+                </el-icon>
                 <span>房屋信息登记</span>
               </el-menu-item>
 
@@ -190,7 +206,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'tenant'"
                 class="menucenter"
               >
-                <el-icon><Menu /></el-icon>
+                <el-icon>
+                  <Menu />
+                </el-icon>
                 <span>房屋租赁</span>
               </el-menu-item>
               <el-menu-item
@@ -198,7 +216,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Menu /></el-icon>
+                <el-icon>
+                  <Menu />
+                </el-icon>
                 <span>房屋状态变更</span>
               </el-menu-item>
               <el-menu-item
@@ -206,7 +226,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Menu /></el-icon>
+                <el-icon>
+                  <Menu />
+                </el-icon>
                 <span>手续费缴纳</span>
               </el-menu-item>
               <el-menu-item
@@ -216,7 +238,9 @@ async function particlesInit(engine) {
                 v-if="store.identity == 'owner'"
                 class="menucenter"
               >
-                <el-icon><Edit /></el-icon>
+                <el-icon>
+                  <Edit />
+                </el-icon>
                 <span>信息修改</span>
               </el-menu-item>
             </el-menu>
@@ -224,16 +248,38 @@ async function particlesInit(engine) {
         </Transition>
         <el-main style="height: 100%">
           <RouterView v-slot="{ Component }">
-            <Transition mode="out-in" name="el-zoom-in-top"
-              ><component :is="Component" />
-            </Transition> </RouterView
-        ></el-main>
+            <Transition mode="out-in" name="el-zoom-in-top">
+              <component :is="Component" />
+            </Transition>
+          </RouterView>
+        </el-main>
       </el-container>
     </el-container>
+    <el-dialog
+      class="centerdia"
+      v-model="vis"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      ><template #header><div class="submenu">用户登录</div></template>
+      <el-form-item label="账户"
+        ><el-input v-model="loginfo.username"></el-input></el-form-item
+      ><el-form-item label="密码"
+        ><el-input v-model="loginfo.password"></el-input
+      ></el-form-item>
+      <div class="centerbuttons">
+        <el-button type="primary" @click="go('owner')">登录</el-button
+        ><el-button type="danger" @click="vis = false">返回</el-button>
+      </div></el-dialog
+    >
   </div>
 </template>
 
 <style scoped>
+.centerbuttons {
+  display: flex;
+  justify-content: center;
+}
 .center {
   line-height: 60px;
   padding-left: 40px;
@@ -241,6 +287,7 @@ async function particlesInit(engine) {
 
   user-select: none;
 }
+
 .header {
   background-color: white;
   color: var(--el-color-primary);
@@ -248,6 +295,7 @@ async function particlesInit(engine) {
   position: relative;
   z-index: 100;
 }
+
 .right {
   float: right;
   margin-top: 13px;
@@ -259,5 +307,13 @@ span {
   width: 100%;
   justify-content: center;
   display: flex;
+}
+.centerdia {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  max-width: 800px;
 }
 </style>

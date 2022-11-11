@@ -59,3 +59,15 @@
   password: "",
 }
 ```
+
+
+## /login
+
+用户登录，请求体结构
+
+```json
+{
+  username: "",
+  password: "",
+}
+```

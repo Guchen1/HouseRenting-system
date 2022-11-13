@@ -30,7 +30,7 @@
 }
 ```
 
-## /update/tenant
+## /tenant/update
 
 租客信息更新，请求体结构
 
@@ -46,7 +46,7 @@
 }
 ```
 
-## /update/owner
+## /owner/update
 
 业主信息更新，请求体结构
 
@@ -59,7 +59,6 @@
   password: "",
 }
 ```
-
 
 ## /login
 

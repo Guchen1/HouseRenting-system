@@ -1,8 +1,8 @@
 <template>
   <div style="display: flow-root; height: 100%">
-    <h1 style="font-size: 20px; padding-left: 30px">欢迎，{{ store.name }}</h1>
-    <h3 style="font-size: 20px; padding-left: 30px; padding-bottom: 30px">
-      屋主概览：
+    <h1 style="font-size: 20px; padding-left: 15px">欢迎，{{ store.name }}</h1>
+    <h3 style="font-size: 20px; padding-left: 15px; padding-bottom: 30px">
+      房主概览：
     </h3>
     <div id="wraper" :style="{ 'min-height': (height - 157) / 1.7 + 'px' }">
       <div class="center" :style="{ 'max-width': (height - 157) / 1.7 + 'px' }">
@@ -34,6 +34,11 @@ onMounted(() => {
           title: {
             display: true,
             text: "房屋出租情况",
+            position: "bottom",
+          },
+          legend: {
+            display: true,
+            position: "bottom",
           },
         },
       },
@@ -62,6 +67,7 @@ onMounted(() => {
           title: {
             display: true,
             text: "各房屋租客人数",
+            position: "bottom",
           },
           legend: {
             display: false,

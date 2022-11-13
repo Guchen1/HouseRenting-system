@@ -11,6 +11,7 @@ const route = useRoute();
 const axios = useAxios();
 const scroll = ref(null);
 const height = ref(0);
+const main = ref(null);
 const loginfo = reactive({
   username: "",
   password: "",
@@ -99,6 +100,7 @@ const options = {
   detectRetina: true,
 };
 const detect = function () {
+  console.log(main.value);
   height.value = window.innerHeight;
   setTimeout(() => {
     scroll.value.update();
@@ -119,18 +121,18 @@ const back = () => {
   }, 500);
 };
 const go = (path) => {
-   if (loginfo.username != "" && loginfo.password != ""){
-   console.log(1)
+  /* if (loginfo.username != "" && loginfo.password != "") {
+    console.log(1);
     axios
       .post(store.url + "/login", loginfo)
       .then((res) => {
-        let response= JSON.parse(res.data.value)
-        
-        if (res.data.status == 200&&response.ok==true) {
+        let response = JSON.parse(res.data.value);
+
+        if (res.data.status == 200 && response.ok == true) {
           vis.value = false;
           store.logged = true;
           store.identity = res.data.identity;
-          store.name=res.data.name;
+          store.name = res.data.name;
           store.centershow = false;
           router.push("/" + store.identity);
           bdisabled.value = true;
@@ -149,11 +151,11 @@ const go = (path) => {
       })
       .catch(() => {
         ElMessage.error("网络错误");
-      });}
-  else {
+      });
+  } else {
     ElMessage.error("用户名或密码不能为空");
-  } 
-  /*if (loginfo.username == "guchen" && loginfo.password == "123456") {
+  } */
+  if (loginfo.username == "guchen" && loginfo.password == "123456") {
     ElMessage.success("登录成功");
 
     vis.value = false;
@@ -172,7 +174,7 @@ const go = (path) => {
     setTimeout(() => {
       bdisabled.value = false;
     }, 500);
-  } else ElMessage.error("用户名或密码错误");*/
+  } else ElMessage.error("用户名或密码错误");
 };
 watch(
   () => route.path,
@@ -297,7 +299,7 @@ async function particlesInit(engine) {
             </el-menu>
           </el-aside>
         </Transition>
-        <el-main style="height: 100%; padding-left: 30px">
+        <el-main ref="main" style="height: 100%; padding-left: 30px">
           <el-scrollbar
             ref="scroll"
             view-style="height: 100%"
@@ -326,7 +328,7 @@ async function particlesInit(engine) {
         ><el-input v-model="loginfo.password"></el-input
       ></el-form-item>
       <div class="centerbuttons">
-        <el-button type="primary" @click="go('tenant')">登录</el-button
+        <el-button type="primary" @click="go('owner')">登录</el-button
         ><el-button type="danger" @click="vis = false">返回</el-button>
       </div></el-dialog
     >
@@ -376,5 +378,11 @@ span {
 }
 :deep(#login) {
   max-width: 400px !important;
+}
+</style>
+<style>
+body {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 </style>

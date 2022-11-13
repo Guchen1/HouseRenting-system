@@ -7,6 +7,8 @@ export const useStore = defineStore("user", {
       logged: false,
       identity: null,
       centershow: false,
+      name: "",
+      url: "localhost:5001",
     };
   },
 });

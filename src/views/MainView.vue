@@ -33,7 +33,7 @@ import TenantInfo from "./TenantInfo.vue";
 const viso = ref(false);
 const vist = ref(false);
 </script>
-<style>
+<style scoped>
 #top {
   height: 100%;
   position: relative;
@@ -62,7 +62,7 @@ const vist = ref(false);
   font-size: 20px;
   user-select: none;
 }
-.centerdia {
+:deep(.centerdia) {
   position: absolute;
   left: 50%;
   top: 50%;

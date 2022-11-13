@@ -1,12 +1,16 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
 import { ref, onMounted, watch, reactive } from "vue";
+import { useAxios } from "./stores/axios";
 import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
 import { ElMessage } from "element-plus";
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const axios = useAxios();
+const scroll = ref(null);
+const height = ref(0);
 const loginfo = reactive({
   username: "",
   password: "",
@@ -14,6 +18,8 @@ const loginfo = reactive({
 const sideshow = ref(false);
 const vis = ref(false);
 onMounted(() => {
+  detect();
+  window.addEventListener("resize", detect);
   if (store.logged) {
     if (store.identity === "owner" && route.path == "/") {
       router.push("/owner");
@@ -92,10 +98,17 @@ const options = {
   },
   detectRetina: true,
 };
+const detect = function () {
+  height.value = window.innerHeight;
+  setTimeout(() => {
+    scroll.value.update();
+  }, 100);
+};
 const back = () => {
   router.push("/");
   bdisabled.value = true;
   store.logged = false;
+  store.name = "";
   sideshow.value = false;
   setTimeout(() => {
     store.centershow = true;
@@ -106,17 +119,52 @@ const back = () => {
   }, 500);
 };
 const go = (path) => {
+  /*  if (loginfo.username != "" && loginfo.password != "")
+    axios
+      .post(store.url + "/login", loginfo)
+      .then((res) => {
+        if (res.data.status == 200) {
+          vis.value = false;
+          store.logged = true;
+          store.identity = res.data.identity;
+          store.name=res.data.name;
+          store.centershow = false;
+          router.push("/" + store.identity);
+          bdisabled.value = true;
+
+          setTimeout(() => {
+            sideshow.value = true;
+            loginfo.username = "";
+            loginfo.password = "";
+          }, 250);
+          setTimeout(() => {
+            bdisabled.value = false;
+          }, 500);
+        } else {
+          ElMessage.error("用户名或密码错误");
+        }
+      })
+      .catch(() => {
+        ElMessage.error("网络错误");
+      });
+  else {
+    ElMessage.error("用户名或密码不能为空");
+  } */
   if (loginfo.username == "guchen" && loginfo.password == "123456") {
     ElMessage.success("登录成功");
+
     vis.value = false;
     store.logged = true;
     store.identity = path;
+    store.name = "顾晨";
     store.centershow = false;
     router.push("/" + path);
     bdisabled.value = true;
 
     setTimeout(() => {
       sideshow.value = true;
+      loginfo.username = "";
+      loginfo.password = "";
     }, 250);
     setTimeout(() => {
       bdisabled.value = false;
@@ -246,16 +294,23 @@ async function particlesInit(engine) {
             </el-menu>
           </el-aside>
         </Transition>
-        <el-main style="height: 100%">
-          <RouterView v-slot="{ Component }">
-            <Transition mode="out-in" name="el-zoom-in-top">
-              <component :is="Component" />
-            </Transition>
-          </RouterView>
+        <el-main style="height: 100%; padding-left: 30px">
+          <el-scrollbar
+            ref="scroll"
+            view-style="height: 100%"
+            :max-height="height - 100 + 'px'"
+          >
+            <RouterView v-slot="{ Component }">
+              <Transition mode="out-in" name="el-zoom-in-top">
+                <component :height="height" :is="Component" />
+              </Transition>
+            </RouterView>
+          </el-scrollbar>
         </el-main>
       </el-container>
     </el-container>
     <el-dialog
+      id="login"
       class="centerdia"
       v-model="vis"
       :show-close="false"
@@ -308,12 +363,15 @@ span {
   justify-content: center;
   display: flex;
 }
-.centerdia {
+:deep(.centerdia) {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
   max-width: 800px;
+}
+:deep(#login) {
+  max-width: 400px !important;
 }
 </style>

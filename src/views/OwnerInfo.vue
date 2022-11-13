@@ -3,6 +3,7 @@ import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useAxios } from "../stores/axios";
 import { useStore } from "../stores/user";
+import { ElMessage } from "element-plus";
 const emit = defineEmits(["exit"]);
 // do not use same name with ref
 const store = useStore();
@@ -17,7 +18,7 @@ const form = reactive({
 });
 const submit = () => {
   if (!store.logged)
-    axios.post("/register/tenant", form).then((res) => {
+    axios.post(store.url + "/register/tenant", form).then((res) => {
       if (res.data.status == 200) {
         store.centershow = false;
         store.logged = true;
@@ -29,7 +30,12 @@ const submit = () => {
         emit("exit");
       }
     });
-  else axios.post("/updateinfo/tenant", form);
+  else
+    axios.post(store.url + "/updateinfo/tenant", form).then((res) => {
+      if (res.data.status == 200) {
+        ElMessage.success("修改成功");
+      }
+    });
   console.log(form);
 };
 </script>

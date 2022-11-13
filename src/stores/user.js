@@ -8,7 +8,7 @@ export const useStore = defineStore("user", {
       identity: null,
       centershow: false,
       name: "",
-      url: "localhost:5001",
+      url: "http://localhost:8000",
     };
   },
 });

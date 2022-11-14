@@ -120,30 +120,33 @@ const back = () => {
   }, 500);
 };
 const go = (path) => {
-  /* if (loginfo.username != "" && loginfo.password != "") {
+  if (loginfo.username != "" && loginfo.password != "") {
     console.log(1);
     axios
       .post(store.url + "/login", loginfo)
       .then((res) => {
+        if (res.status == 200) {
+          let response = JSON.parse(res.data);
+          if (response.ok == true) {
+            vis.value = false;
+            store.logged = true;
+            store.identity = response.identity;
+            store.name = response.name;
+            store.centershow = false;
+            router.push("/" + store.identity);
+            bdisabled.value = true;
 
-        if (res.status == 200 && response.ok == true) {
-          let response = JSON.parse(res.data.value);
-          vis.value = false;
-          store.logged = true;
-          store.identity = response.identity;
-          store.name = response.name;
-          store.centershow = false;
-          router.push("/" + store.identity);
-          bdisabled.value = true;
-
-          setTimeout(() => {
-            sideshow.value = true;
-            loginfo.username = "";
-            loginfo.password = "";
-          }, 250);
-          setTimeout(() => {
-            bdisabled.value = false;
-          }, 500);
+            setTimeout(() => {
+              sideshow.value = true;
+              loginfo.username = "";
+              loginfo.password = "";
+            }, 250);
+            setTimeout(() => {
+              bdisabled.value = false;
+            }, 500);
+          } else {
+            ElMessage.error("用户名或密码错误");
+          }
         } else {
           ElMessage.error("用户名或密码错误");
         }
@@ -153,8 +156,8 @@ const go = (path) => {
       });
   } else {
     ElMessage.error("用户名或密码不能为空");
-  } */
-  if (loginfo.username == "guchen" && loginfo.password == "123456") {
+  }
+  /* if (loginfo.username == "guchen" && loginfo.password == "123456") {
     ElMessage.success("登录成功");
 
     vis.value = false;
@@ -173,7 +176,7 @@ const go = (path) => {
     setTimeout(() => {
       bdisabled.value = false;
     }, 500);
-  } else ElMessage.error("用户名或密码错误");
+  } else ElMessage.error("用户名或密码错误"); */
 };
 watch(
   () => route.path,

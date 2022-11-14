@@ -89,12 +89,12 @@
 
 ```json
 {
+  name: "",
   address: "",
-  area: "",
-  price: "",
-  type: "",
+  total: 0,
+  rent: 0,
+  price: 0,
   description: "",
-  owner: "",
 }
 ```
 
@@ -105,12 +105,12 @@
 ```json
 {
   id: "",
+  name: "",
   address: "",
-  area: "",
-  price: "",
-  type: "",
+  total: 0,
+  rent: 0,
+  price: 0,
   description: "",
-  owner: "",
 }
 ```
 
@@ -142,6 +142,7 @@
   ```json
   [
     {
+      id: "",
       name: "",
       address: "",
       total: 0,
@@ -150,6 +151,7 @@
       description: "",
     },
     {
+      id: "",
       name: "",
       address: "",
       total: 0,

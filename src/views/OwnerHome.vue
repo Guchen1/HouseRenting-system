@@ -113,6 +113,6 @@ onMounted(() => {
   position: absolute;
   width: 100%;
   grid-template-columns: 50% 50%;
-  bottom: 150px;
+  bottom: 50px;
 }
 </style>

@@ -100,7 +100,6 @@ const options = {
   detectRetina: true,
 };
 const detect = function () {
-  console.log(main.value);
   height.value = window.innerHeight;
   setTimeout(() => {
     scroll.value.update();
@@ -126,13 +125,13 @@ const go = (path) => {
     axios
       .post(store.url + "/login", loginfo)
       .then((res) => {
-        let response = JSON.parse(res.data.value);
 
-        if (res.data.status == 200 && response.ok == true) {
+        if (resstatus == 200 && response.ok == true) {
+          let response = JSON.parse(res.data.value);
           vis.value = false;
           store.logged = true;
-          store.identity = res.data.identity;
-          store.name = res.data.name;
+          store.identity = response.identity;
+          store.name = response.name;
           store.centershow = false;
           router.push("/" + store.identity);
           bdisabled.value = true;
@@ -170,7 +169,7 @@ const go = (path) => {
       sideshow.value = true;
       loginfo.username = "";
       loginfo.password = "";
-    }, 250);
+    }, 300);
     setTimeout(() => {
       bdisabled.value = false;
     }, 500);
@@ -226,7 +225,7 @@ async function particlesInit(engine) {
       </el-header>
       <el-container style="height: 100%">
         <Transition
-          :duration="250"
+          :duration="200"
           enter-active-class="animate__animated animate__lightSpeedInLeft"
           leave-active-class="animate__animated animate__slideOutLeft"
         >

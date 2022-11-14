@@ -8,21 +8,42 @@
       <el-table-column prop="price" label="价格" />
       <el-table-column label="操作"
         ><template #default="scope">
-          <el-button link type="primary" size="small" @click="f(scope)"
+          <el-button
+            link
+            type="primary"
+            size="small"
+            @click="
+              id = scope.row.id;
+              visible = true;
+            "
             >修改</el-button
           ><el-button link type="danger" size="small">删除</el-button>
         </template></el-table-column
       >
     </el-table>
+    <el-dialog
+      v-model="visible"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :destroy-on-close="true"
+      class="centerdia"
+      ><template #header> <h1 style="margin: 0px">房屋信息修改</h1> </template
+      ><AddHouse :id="id" @exit="visible = false"
+    /></el-dialog>
   </div>
 </template>
 <script setup>
-import { reactive } from "vue";
-const f = (x) => {
-  console.log(x);
-};
+import { reactive, ref, onMounted } from "vue";
+import AddHouse from "@/components/AddHouse.vue";
+import { useAxios } from "../stores/axios";
+import { ElMessage } from "element-plus";
+const visible = ref(false);
+const id = ref("");
+const axios = useAxios();
 const tableData = reactive([
   {
+    id: "1",
     name: "西电南校区",
     address: "西安市长安区西沣路",
     total: 5000,
@@ -30,6 +51,7 @@ const tableData = reactive([
     price: 1000,
   },
   {
+    id: "2",
     name: "西电北校区",
     address: "西安市雁塔区太白南路",
     total: 3000,
@@ -37,5 +59,32 @@ const tableData = reactive([
     price: 1500,
   },
 ]);
+onMounted(() => {
+  axios
+    .get("/owner/houseinfo")
+    .then((res) => {
+      if (res.code == 200) {
+        let response = JSON.parse(res.data);
+        response.forEach((element) => {
+          tableData.push(element);
+        });
+      } else ElMessage.error("获取房屋信息失败");
+    })
+    .catch(() => {
+      ElMessage.error("获取房屋信息失败");
+    });
+});
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.el-dialog__body) {
+  padding-top: 10px;
+}
+:deep(.centerdia) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  max-width: 800px;
+}
+</style>

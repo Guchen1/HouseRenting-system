@@ -19,7 +19,7 @@ const form = reactive({
 const submit = () => {
   if (!store.logged)
     axios.post(store.url + "/register/tenant", form).then((res) => {
-      if (res.data.status == 200) {
+      if (res.status == 200) {
         store.centershow = false;
         store.logged = true;
 
@@ -32,16 +32,15 @@ const submit = () => {
     });
   else
     axios.post(store.url + "/updateinfo/tenant", form).then((res) => {
-      if (res.data.status == 200) {
+      if (res.status == 200) {
         ElMessage.success("修改成功");
       }
     });
-  console.log(form);
 };
 </script>
 
 <template>
-  <div>
+  <div :class="$route.path == '/owner/info' ? 'logged' : ''">
     <el-form
       :model="form"
       style="padding-right: 5%"
@@ -76,5 +75,9 @@ const submit = () => {
 .centerbuttons {
   display: flex;
   justify-content: center;
+}
+.logged {
+  padding-left: 15px;
+  padding-top: 20px;
 }
 </style>

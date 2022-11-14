@@ -126,7 +126,7 @@ const go = (path) => {
       .then((res) => {
         if (res.status == 200) {
           let response = res.data;
-          if (response.isLogin == false) {
+          if (!response.isLogin) {
             ElMessage.error(response.reason);
           } else {
             vis.value = false;
@@ -148,7 +148,8 @@ const go = (path) => {
         } else {
           ElMessage.error("疑似网络错误");
         }
-      }).catch(() => {
+      })
+      .catch(() => {
         ElMessage.error("内部错误");
       });
   } else {

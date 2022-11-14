@@ -34,10 +34,13 @@
   </div>
 </template>
 <script setup>
+//TODO:interface
 import { reactive, ref, onMounted } from "vue";
 import AddHouse from "@/components/AddHouse.vue";
 import { useAxios } from "../stores/axios";
 import { ElMessage } from "element-plus";
+import { useStore } from "../stores/user.js";
+const store = useStore();
 const visible = ref(false);
 const id = ref("");
 const axios = useAxios();
@@ -61,9 +64,9 @@ const tableData = reactive([
 ]);
 onMounted(() => {
   axios
-    .get("/owner/houseinfo")
+    .get(store.url + "/owner/houseinfo")
     .then((res) => {
-      if (res.code == 200) {
+      if (res.status == 200) {
         let response = JSON.parse(res.data);
         response.forEach((element) => {
           tableData.push(element);

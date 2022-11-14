@@ -126,7 +126,7 @@ const go = (path) => {
       .post(store.url + "/login", loginfo)
       .then((res) => {
 
-        if (resstatus == 200 && response.ok == true) {
+        if (res.status == 200 && response.ok == true) {
           let response = JSON.parse(res.data.value);
           vis.value = false;
           store.logged = true;

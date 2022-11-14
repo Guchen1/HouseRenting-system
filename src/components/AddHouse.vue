@@ -66,6 +66,7 @@
   </div>
 </template>
 <script setup>
+//TODO:interface
 import { reactive, onMounted } from "vue";
 import { useAxios } from "@/stores/axios.js";
 import { useStore } from "@/stores/user.js";
@@ -118,17 +119,22 @@ const submit = () => {
 
 onMounted(() => {
   if (props.id != undefined) {
-    axios.get(store.url + "/owner/houseinfo?id=" + props.id).then((res) => {
-      if (res.status == 200) {
-        let data = JSON.parse(res.data);
-        form.name = data.name;
-        form.address = data.address;
-        form.total = data.total;
-        form.rent = data.rent;
-        form.price = data.price;
-        form.description = data.description;
-      }
-    });
+    axios
+      .get(store.url + "/owner/houseinfo?id=" + props.id)
+      .then((res) => {
+        if (res.status == 200) {
+          let data = JSON.parse(res.data);
+          form.name = data.name;
+          form.address = data.address;
+          form.total = data.total;
+          form.rent = data.rent;
+          form.price = data.price;
+          form.description = data.description;
+        }
+      })
+      .catch(() => {
+        ElMessage.error("获取房屋信息失败");
+      });
   }
 });
 </script>

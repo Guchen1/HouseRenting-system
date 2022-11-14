@@ -25,7 +25,7 @@ Chart.register(...registerables);
 onMounted(() => {
   setTimeout(() => {
     s.value = 0;
-    const mychart = new Chart(document.getElementById("myChart"), {
+    new Chart(document.getElementById("myChart"), {
       type: "doughnut",
       options: {
         responsive: true,
@@ -58,7 +58,7 @@ onMounted(() => {
         ],
       },
     });
-    const mychart2 = new Chart(document.getElementById("myChart2"), {
+    new Chart(document.getElementById("myChart2"), {
       type: "bar",
       options: {
         responsive: true,

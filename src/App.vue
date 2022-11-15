@@ -120,20 +120,50 @@ const back = () => {
     bdisabled.value = false;
   }, 500);
 };
+const check = () => {
+  axios
+    .post(store.url + "/login")
+    .then((res) => {
+      if (res.status == 200) {
+        let response = JSON.parse(res.data);
+        console.log(response.reason);
+        if (response.isLogin) {
+          vis.value = false;
+          store.logged = true;
+          store.identity = !response.identity ? "owner" : "tenant";
+          store.name = response.data.name;
+          store.centershow = false;
+          router.push("/" + store.identity);
+          bdisabled.value = true;
+          setTimeout(() => {
+            sideshow.value = true;
+            loginfo.username = "";
+            loginfo.password = "";
+          }, 250);
+          setTimeout(() => {
+            bdisabled.value = false;
+          }, 500);
+        } else console.log(response.reason);
+      }
+    })
+    .catch(() => {});
+};
+
 const go = (path, reg = false) => {
-  /* if (loginfo.username != "" && loginfo.password != "") {
+  if (loginfo.username != "" && loginfo.password != "") {
     axios
-      .post(store.url + "/login/", loginfo)
+      .post(store.url + "/login", loginfo)
       .then((res) => {
         if (res.status == 200) {
           let response = res.data;
           if (!response.isLogin) {
             ElMessage.error(response.reason);
           } else {
+            console.log(res.data);
             vis.value = false;
             store.logged = true;
-            store.identity = response.identity;
-            store.name = response.name;
+            store.identity = response.identity == "1" ? "owner" : "tenant";
+            store.name = response.data.name;
             store.centershow = false;
             router.push("/" + store.identity);
             bdisabled.value = true;
@@ -155,8 +185,8 @@ const go = (path, reg = false) => {
       });
   } else {
     ElMessage.error("用户名或密码不能为空");
-  } */
-  if (loginfo.username == "guchen" && loginfo.password == "123456") {
+  }
+  /* if (loginfo.username == "guchen" && loginfo.password == "123456") {
     if (!reg) ElMessage.success("登录成功");
 
     vis.value = false;
@@ -175,7 +205,7 @@ const go = (path, reg = false) => {
     setTimeout(() => {
       bdisabled.value = false;
     }, 500);
-  } else ElMessage.error("用户名或密码错误");
+  } else ElMessage.error("用户名或密码错误"); */
 };
 
 const bdisabled = ref(false);
@@ -193,6 +223,7 @@ router.beforeEach((to, from, next) => {
     }
   }
 });
+check();
 </script>
 
 <template>

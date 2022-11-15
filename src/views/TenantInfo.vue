@@ -80,10 +80,10 @@ onMounted(() => {
         ><el-col :span="8">
           <el-form-item label="性别"
             ><el-select v-model="form.sex"
-              ><el-option label="男" value="man"></el-option
+              ><el-option label="男" value="True"></el-option
               ><el-option
                 label="女"
-                value="woman"
+                value="False"
               ></el-option></el-select></el-form-item></el-col
         ><el-col :span="8">
           <el-form-item label="出生日期">

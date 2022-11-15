@@ -20,7 +20,7 @@ const form = reactive({
 const submit = () => {
   if (!store.logged)
     axios
-      .post(store.url + "/register/tenant", form)
+      .post(store.url + "/register/owner", form)
       .then((res) => {
         if (res.status == 200) {
           setTimeout(() => {
@@ -34,7 +34,7 @@ const submit = () => {
         ElMessage.error(err);
       });
   else
-    axios.post(store.url + "/tenant/update", form).then((res) => {
+    axios.post(store.url + "/owner/update", form).then((res) => {
       if (res.status == 200) {
         ElMessage.success("修改成功");
       }

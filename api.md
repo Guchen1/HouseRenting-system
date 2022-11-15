@@ -10,7 +10,7 @@
 {
   "name": "",
   "address": "",
-  "sex": "",
+  "sex": true/false,
   "phone": "",
   "birth": "",
   "username": "",

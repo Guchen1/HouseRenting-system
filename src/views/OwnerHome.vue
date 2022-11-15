@@ -36,7 +36,7 @@ onMounted(() => {
     .get(store.url + "/owner/statistics")
     .then((res) => {
       if (res.status == 200) {
-        let response = JSON.parse(res.data);
+        let response = res.data;
         loading.value = false;
         new Chart(document.getElementById("myChart"), {
           type: "doughnut",

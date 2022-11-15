@@ -75,7 +75,7 @@ onMounted(() => {
     .then((res) => {
       loading.value = false;
       if (res.status == 200) {
-        let response = JSON.parse(res.data);
+        let response = res.data;
         response.forEach((element) => {
           tableData.push(element);
         });

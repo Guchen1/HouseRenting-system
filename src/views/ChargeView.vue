@@ -58,7 +58,7 @@ onMounted(() => {
     .get(store.url + "/" + store.identity + "/payinfo")
     .then((res) => {
       if (res.status == 200) {
-        let response = JSON.parse(res.data);
+        let response = res.data;
         response.forEach((item) => {
           data.push(item);
         });

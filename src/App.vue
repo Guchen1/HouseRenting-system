@@ -125,7 +125,7 @@ const check = () => {
     .get(store.url + "/login")
     .then((res) => {
       if (res.status == 200) {
-        let response = JSON.parse(res.data);
+        let response = res.data;
         console.log(response.reason);
         if (response.isLogin) {
           vis.value = false;

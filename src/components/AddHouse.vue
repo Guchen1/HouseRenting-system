@@ -123,7 +123,7 @@ onMounted(() => {
       .get(store.url + "/owner/houseinfo?id=" + props.id)
       .then((res) => {
         if (res.status == 200) {
-          let data = JSON.parse(res.data);
+          let data = res.data;
           form.name = data.name;
           form.address = data.address;
           form.total = data.total;

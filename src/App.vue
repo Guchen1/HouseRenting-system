@@ -23,16 +23,13 @@ onMounted(() => {
   window.addEventListener("resize", detect);
   if (store.logged) {
     if (store.identity === "owner" && route.path == "/") {
-      router.push("/owner");
       store.centershow = false;
       sideshow.value = true;
     } else if (store.identity === "tenant" && route.path == "/") {
-      router.push("/tenant");
       store.centershow = false;
       sideshow.value = true;
     }
   } else {
-    router.push("/");
     store.centershow = true;
   }
 });
@@ -106,6 +103,7 @@ const detect = function () {
   }, 100);
 };
 const back = () => {
+  store.identity = null;
   router.push("/");
   bdisabled.value = true;
   store.logged = false;
@@ -115,12 +113,11 @@ const back = () => {
     store.centershow = true;
   }, 250);
   setTimeout(() => {
-    store.identity = null;
     bdisabled.value = false;
   }, 500);
 };
 const go = (path) => {
-  if (loginfo.username != "" && loginfo.password != "") {
+  /* if (loginfo.username != "" && loginfo.password != "") {
     axios
       .post(store.url + "/login/", loginfo)
       .then((res) => {
@@ -154,8 +151,8 @@ const go = (path) => {
       });
   } else {
     ElMessage.error("用户名或密码不能为空");
-  }
-  /* if (loginfo.username == "guchen" && loginfo.password == "123456") {
+  } */
+  if (loginfo.username == "guchen" && loginfo.password == "123456") {
     ElMessage.success("登录成功");
 
     vis.value = false;
@@ -174,20 +171,24 @@ const go = (path) => {
     setTimeout(() => {
       bdisabled.value = false;
     }, 500);
-  } else ElMessage.error("用户名或密码错误"); */
+  } else ElMessage.error("用户名或密码错误");
 };
-watch(
-  () => route.path,
-  (path) => {
-    if (path === "/" && store.logged) {
-      router.push("/" + store.identity);
-    }
-  }
-);
+
 const bdisabled = ref(false);
 async function particlesInit(engine) {
   await loadFull(engine);
 }
+router.beforeEach((to, from, next) => {
+  if (!store.logged && to.path != "/") {
+    next("/");
+  } else {
+    if (to.path.search(store.identity) == -1 && store.identity != null) {
+      next("/" + store.identity);
+    } else {
+      next();
+    }
+  }
+});
 </script>
 
 <template>
@@ -234,7 +235,7 @@ async function particlesInit(engine) {
             <el-menu :default-active="route.path" style="height: 100%" router>
               <el-menu-item
                 :index="store.identity == 'owner' ? '/owner' : '/tenant'"
-                v-if="store.identity == 'owner'"
+                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -245,7 +246,7 @@ async function particlesInit(engine) {
 
               <el-menu-item
                 index="/owner/house"
-                v-if="store.identity == 'owner'"
+                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -256,7 +257,7 @@ async function particlesInit(engine) {
 
               <el-menu-item
                 index="/tenant/rent"
-                v-if="store.identity == 'tenant'"
+                v-if="route.path.search('tenant') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -266,7 +267,7 @@ async function particlesInit(engine) {
               </el-menu-item>
               <el-menu-item
                 index="/owner/state"
-                v-if="store.identity == 'owner'"
+                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -276,7 +277,7 @@ async function particlesInit(engine) {
               </el-menu-item>
               <el-menu-item
                 index="/owner/charge"
-                v-if="store.identity == 'owner'"
+                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -288,7 +289,7 @@ async function particlesInit(engine) {
                 :index="
                   store.identity == 'owner' ? '/owner/info' : '/tenant/info'
                 "
-                v-if="store.identity == 'owner'"
+                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>

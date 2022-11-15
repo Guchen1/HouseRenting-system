@@ -82,6 +82,9 @@ const ok = (scope, id) => {
       } else {
         ElMessage.error("操作失败");
       }
+    })
+    .catch(() => {
+      ElMessage.error("网络错误");
     });
 };
 const nook = (scope, id) => {
@@ -94,6 +97,9 @@ const nook = (scope, id) => {
       } else {
         ElMessage.error("操作失败");
       }
+    })
+    .catch(() => {
+      ElMessage.error("网络错误");
     });
 };
 const del = (scope, id) => {

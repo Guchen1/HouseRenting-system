@@ -14,7 +14,10 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       ><template #header><div class="submenu">房主登记</div></template>
-      <OwnerInfo @exit="viso = false"></OwnerInfo> </el-dialog
+      <OwnerInfo
+        @registered="(a, b) => emit('registered', a, b)"
+        @exit="viso = false"
+      ></OwnerInfo> </el-dialog
     ><el-dialog
       class="centerdia"
       v-model="vist"
@@ -22,7 +25,10 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       ><template #header><div class="submenu">租客登记</div></template>
-      <TenantInfo @exit="vist = false"></TenantInfo>
+      <TenantInfo
+        @registered="(a, b) => emit('registered', a, b)"
+        @exit="vist = false"
+      ></TenantInfo>
     </el-dialog>
   </div>
 </template>
@@ -32,6 +38,7 @@ import OwnerInfo from "./OwnerInfo.vue";
 import TenantInfo from "./TenantInfo.vue";
 const viso = ref(false);
 const vist = ref(false);
+const emit = defineEmits(["registered"]);
 </script>
 <style scoped>
 #top {

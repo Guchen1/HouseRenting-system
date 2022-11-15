@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import ElementPlus from "element-plus";
 import App from "./App.vue";
 import router from "./router";
 import Particles from "vue3-particles";
@@ -20,5 +19,4 @@ app.use(Particles);
 app.use(router);
 const store = use();
 store.axios = axios;
-app.use(ElementPlus);
 app.mount("#app");

@@ -1,13 +1,14 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAxios } from "../stores/axios";
 import { useStore } from "../stores/user";
 import { ElMessage } from "element-plus";
-const emit = defineEmits(["exit"]);
+const emit = defineEmits(["exit", "registered"]);
 // do not use same name with ref
 const store = useStore();
 const router = useRouter();
+const loading = ref(true);
 const axios = useAxios();
 const form = reactive({
   name: "",
@@ -18,29 +19,54 @@ const form = reactive({
 });
 const submit = () => {
   if (!store.logged)
-    axios.post(store.url + "/register/tenant", form).then((res) => {
-      if (res.status == 200) {
-        store.centershow = false;
-        store.logged = true;
-
-        store.identity = "owner";
-        setTimeout(() => {
-          router.push("/owner");
-        }, 100);
-        emit("exit");
-      }
-    });
+    axios
+      .post(store.url + "/register/tenant", form)
+      .then((res) => {
+        if (res.status == 200) {
+          setTimeout(() => {
+            emit("registered", form.username, form.password);
+          }, 100);
+          ElMessage.success("注册成功");
+          emit("exit");
+        }
+      })
+      .catch((err) => {
+        ElMessage.error(err);
+      });
   else
-    axios.post(store.url + "/updateinfo/tenant", form).then((res) => {
+    axios.post(store.url + "/tenant/update", form).then((res) => {
       if (res.status == 200) {
         ElMessage.success("修改成功");
       }
     });
 };
+onMounted(() => {
+  if (store.logged) {
+    axios
+      .get(store.url + "/owner/info")
+      .then((res) => {
+        loading.value = false;
+        if (res.status == 200) {
+          let response = JSON.parse(res.data);
+          form.name = response.name;
+          form.address = response.address;
+          form.phone = response.phone;
+        }
+      })
+      .catch((err) => {
+        loading.value = false;
+        ElMessage.error(err);
+      });
+  }
+});
 </script>
 
 <template>
-  <div :class="$route.path == '/owner/info' ? 'logged' : ''">
+  <div
+    v-loading="$route.path == '/owner/info' ? loading : false"
+    element-loading-text="加载中"
+    :class="$route.path == '/owner/info' ? 'logged' : ''"
+  >
     <el-form
       :model="form"
       style="padding-right: 5%"

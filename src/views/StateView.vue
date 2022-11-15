@@ -2,7 +2,13 @@
   <div id="outer">
     <div style="max-height: 45%">
       <h1>待操作列表</h1>
-      <el-table :data="tableData" stripe>
+      <el-table
+        style="min-height: 200px"
+        element-loading-text="加载中"
+        v-loading="loading"
+        :data="tableData"
+        stripe
+      >
         <el-table-column prop="name" label="房屋名称" />
         <el-table-column prop="tenant" label="租户姓名" />
         <el-table-column prop="phone" label="租户电话" />
@@ -27,7 +33,14 @@
     </div>
     <div style="max-height: 45%">
       <h1>房屋列表</h1>
-      <el-table row-key="id" :data="wholeData" stripe>
+      <el-table
+        style="min-height: 200px"
+        element-loading-text="加载中"
+        v-loading="loading"
+        row-key="id"
+        :data="wholeData"
+        stripe
+      >
         <el-table-column prop="name" label="房屋名称" />
         <el-table-column prop="tenant" label="租户姓名" />
         <el-table-column prop="phone" label="租户电话" />
@@ -57,17 +70,18 @@
 </style>
 <script setup>
 //TODO:interface
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useAxios } from "../stores/axios.js";
 import { useStore } from "../stores/user.js";
 import { ElMessage } from "element-plus";
 const axios = useAxios();
 const store = useStore();
+const loading = ref(true);
 const ok = (scope, id) => {
   axios
     .post(store.url + "/owner/confirm", { id: id, state: true })
     .then((res) => {
-      if (res.data.code == 200) {
+      if (res.status == 200) {
         tableData.splice(scope.$index, 1);
         let i;
         for (i in wholeData) {
@@ -91,7 +105,7 @@ const nook = (scope, id) => {
   axios
     .post(store.url + "/owner/confirm", { id: id, state: false })
     .then((res) => {
-      if (res.data.code == 200) {
+      if (res.status == 200) {
         tableData.splice(scope.$index, 1);
         ElMessage.success("操作成功");
       } else {
@@ -102,7 +116,7 @@ const nook = (scope, id) => {
       ElMessage.error("网络错误");
     });
 };
-const del = (scope, id) => {
+const del = (_scope, id) => {
   let request = { id: id };
   axios
     .post(store.url + "/owner/cancel", request)
@@ -147,6 +161,7 @@ onMounted(() => {
   axios
     .get(store.url + "/owner/opinfo")
     .then((res) => {
+      loading.value = false;
       if (res.status == 200) {
         let response = JSON.parse(res.data);
         response[0].forEach((element) => {
@@ -160,6 +175,7 @@ onMounted(() => {
       }
     })
     .catch(() => {
+      loading.value = false;
       ElMessage.error("获取房屋列表失败");
     });
 });

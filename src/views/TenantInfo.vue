@@ -1,13 +1,14 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAxios } from "../stores/axios";
 import { useStore } from "../stores/user";
 import { ElMessage } from "element-plus";
-const emit = defineEmits(["exit"]);
+const emit = defineEmits(["exit", "registered"]);
 // do not use same name with ref
 const store = useStore();
 const router = useRouter();
+const loading = ref(true);
 const axios = useAxios();
 const form = reactive({
   name: "",
@@ -21,51 +22,84 @@ const form = reactive({
 const submit = () => {
   if (!store.logged)
     axios.post(store.url + "/register/tenant", form).then((res) => {
-      if (res.data.status == 200) {
-        store.centershow = false;
-        store.logged = true;
-        store.identity = "tenant";
+      if (res.status == 200) {
         setTimeout(() => {
-          router.push("/tenant");
+          emit("registered", form.username, form.password);
         }, 100);
+        ElMessage.success("注册成功");
         emit("exit");
       }
     });
   else
-    axios.post(store.url + "/updateinfo/tenant", form).then((res) => {
-      if (res.data.status == 200) {
+    axios.post(store.url + "/tenant/update", form).then((res) => {
+      if (res.status == 200) {
         ElMessage.success("修改成功");
       }
     });
   console.log(form);
 };
+onMounted(() => {
+  if (store.logged) {
+    axios
+      .get(store.url + "/tenant/info")
+      .then((res) => {
+        loading.value = false;
+        if (res.status == 200) {
+          let response = JSON.parse(res.data);
+          form.name = response.name;
+          form.address = response.address;
+          form.phone = response.phone;
+          form.birth = response.birth;
+          form.sex = response.sex;
+        }
+      })
+      .catch((err) => {
+        loading.value = false;
+        ElMessage.error(err);
+      });
+  }
+});
 </script>
 
 <template>
-  <div>
+  <div
+    v-loading="$route.path == '/tenant/info' ? loading : false"
+    element-loading-text="加载中"
+    :class="$route.path == '/tenant/info' ? 'logged' : ''"
+  >
     <el-form
       :model="form"
       style="padding-right: 5%"
       label-width="100px"
       label-position="top"
     >
-      <el-form-item label="姓名">
-        <el-input v-model="form.name" />
-      </el-form-item>
-      <el-form-item label="性别"
-        ><el-select v-model="form.sex"
-          ><el-option label="男" value="man"></el-option
-          ><el-option label="女" value="woman"></el-option></el-select
-      ></el-form-item>
+      <el-row :gutter="20" justify="center"
+        ><el-col :span="8"
+          ><el-form-item label="姓名">
+            <el-input v-model="form.name" /> </el-form-item></el-col
+        ><el-col :span="8">
+          <el-form-item label="性别"
+            ><el-select v-model="form.sex"
+              ><el-option label="男" value="man"></el-option
+              ><el-option
+                label="女"
+                value="woman"
+              ></el-option></el-select></el-form-item></el-col
+        ><el-col :span="8">
+          <el-form-item label="出生日期">
+            <el-date-picker
+              v-model="form.birth"
+              type="date"
+            ></el-date-picker> </el-form-item></el-col
+      ></el-row>
+
       <el-form-item label="联系电话"
         ><el-input v-model="form.phone" />
       </el-form-item>
       <el-form-item label="住址">
         <el-input v-model="form.address" />
       </el-form-item>
-      <el-form-item label="出生日期">
-        <el-date-picker v-model="form.birth" type="date"></el-date-picker>
-      </el-form-item>
+
       <el-form-item v-if="store.centershow" label="账号">
         <el-input v-model="form.username" />
       </el-form-item>
@@ -85,5 +119,9 @@ const submit = () => {
 .centerbuttons {
   display: flex;
   justify-content: center;
+}
+.logged {
+  padding-left: 15px;
+  padding-top: 20px;
 }
 </style>

@@ -103,20 +103,24 @@ const detect = function () {
   }, 100);
 };
 const back = () => {
+  store.last = store.identity;
   store.identity = null;
   router.push("/");
   bdisabled.value = true;
   store.logged = false;
   store.name = "";
-  sideshow.value = false;
+  setTimeout(() => {
+    sideshow.value = false;
+  }, 50);
   setTimeout(() => {
     store.centershow = true;
+    store.last = null;
   }, 250);
   setTimeout(() => {
     bdisabled.value = false;
   }, 500);
 };
-const go = (path) => {
+const go = (path, reg = false) => {
   /* if (loginfo.username != "" && loginfo.password != "") {
     axios
       .post(store.url + "/login/", loginfo)
@@ -153,7 +157,7 @@ const go = (path) => {
     ElMessage.error("用户名或密码不能为空");
   } */
   if (loginfo.username == "guchen" && loginfo.password == "123456") {
-    ElMessage.success("登录成功");
+    if (!reg) ElMessage.success("登录成功");
 
     vis.value = false;
     store.logged = true;
@@ -235,7 +239,6 @@ router.beforeEach((to, from, next) => {
             <el-menu :default-active="route.path" style="height: 100%" router>
               <el-menu-item
                 :index="store.identity == 'owner' ? '/owner' : '/tenant'"
-                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -246,7 +249,11 @@ router.beforeEach((to, from, next) => {
 
               <el-menu-item
                 index="/owner/house"
-                v-if="route.path.search('owner') != -1"
+                v-if="
+                  route.path.search('owner') != -1 ||
+                  store.last == 'owner' ||
+                  store.identity == 'owner'
+                "
                 class="menucenter"
               >
                 <el-icon>
@@ -257,7 +264,11 @@ router.beforeEach((to, from, next) => {
 
               <el-menu-item
                 index="/tenant/rent"
-                v-if="route.path.search('tenant') != -1"
+                v-if="
+                  route.path.search('tenant') != -1 ||
+                  store.last == 'tenant' ||
+                  store.identity == 'tenant'
+                "
                 class="menucenter"
               >
                 <el-icon>
@@ -267,7 +278,11 @@ router.beforeEach((to, from, next) => {
               </el-menu-item>
               <el-menu-item
                 index="/owner/state"
-                v-if="route.path.search('owner') != -1"
+                v-if="
+                  route.path.search('owner') != -1 ||
+                  store.last == 'owner' ||
+                  store.identity == 'owner'
+                "
                 class="menucenter"
               >
                 <el-icon>
@@ -276,8 +291,9 @@ router.beforeEach((to, from, next) => {
                 <span>房屋状态变更</span>
               </el-menu-item>
               <el-menu-item
-                index="/owner/charge"
-                v-if="route.path.search('owner') != -1"
+                :index="
+                  store.identity == 'owner' ? '/owner/charge' : '/tenant/charge'
+                "
                 class="menucenter"
               >
                 <el-icon>
@@ -289,7 +305,6 @@ router.beforeEach((to, from, next) => {
                 :index="
                   store.identity == 'owner' ? '/owner/info' : '/tenant/info'
                 "
-                v-if="route.path.search('owner') != -1"
                 class="menucenter"
               >
                 <el-icon>
@@ -308,7 +323,17 @@ router.beforeEach((to, from, next) => {
           >
             <RouterView v-slot="{ Component }">
               <Transition mode="out-in" name="el-zoom-in-top">
-                <component :height="height" :is="Component" />
+                <component
+                  @registered="
+                    (a, b) => {
+                      loginfo.username = a;
+                      loginfo.password = b;
+                      go('owner', true);
+                    }
+                  "
+                  :height="height"
+                  :is="Component"
+                />
               </Transition>
             </RouterView>
           </el-scrollbar>

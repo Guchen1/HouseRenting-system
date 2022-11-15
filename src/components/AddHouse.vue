@@ -88,7 +88,7 @@ const submit = () => {
     axios
       .post(store.url + "/owner/houseinfo?op=1", form)
       .then((res) => {
-        if (res.data.code == 200) {
+        if (res.code == 200) {
           form.name = "";
           form.address = "";
           form.total = 0;
@@ -106,7 +106,7 @@ const submit = () => {
     axios
       .post(store.url + "/owner/houseinfo?op=2", form)
       .then((res) => {
-        if (res.data.code == 200) {
+        if (res.code == 200) {
           emit("exit");
           ElMessage.success("修改成功");
         }

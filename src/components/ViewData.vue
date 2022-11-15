@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-table :data="tableData" stripe>
+    <el-table
+      style="min-height: 200px"
+      v-loading="loading"
+      element-loading-text="加载中"
+      :data="tableData"
+      stripe
+    >
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="address" label="地址" />
       <el-table-column prop="total" label="可租人数" />
@@ -44,6 +50,7 @@ const store = useStore();
 const visible = ref(false);
 const id = ref("");
 const axios = useAxios();
+const loading = ref(true);
 const tableData = reactive([
   {
     id: "1",
@@ -66,6 +73,7 @@ onMounted(() => {
   axios
     .get(store.url + "/owner/houseinfo")
     .then((res) => {
+      loading.value = false;
       if (res.status == 200) {
         let response = JSON.parse(res.data);
         response.forEach((element) => {
@@ -74,6 +82,7 @@ onMounted(() => {
       } else ElMessage.error("获取房屋信息失败");
     })
     .catch(() => {
+      loading.value = false;
       ElMessage.error("获取房屋信息失败");
     });
 });

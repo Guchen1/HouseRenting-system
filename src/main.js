@@ -18,5 +18,6 @@ app.use(createPinia());
 app.use(Particles);
 app.use(router);
 const store = use();
+axios.defaults.withCredentials = true;
 store.axios = axios;
 app.mount("#app");

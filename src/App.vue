@@ -122,7 +122,7 @@ const back = () => {
 };
 const check = () => {
   axios
-    .post(store.url + "/login")
+    .get(store.url + "/login")
     .then((res) => {
       if (res.status == 200) {
         let response = JSON.parse(res.data);

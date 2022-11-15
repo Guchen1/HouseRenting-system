@@ -45,7 +45,7 @@ onMounted(() => {
       .then((res) => {
         loading.value = false;
         if (res.status == 200) {
-          let response = JSON.parse(res.data);
+          let response = res.data;
           form.name = response.name;
           form.address = response.address;
           form.phone = response.phone;

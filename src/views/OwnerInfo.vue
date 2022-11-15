@@ -42,21 +42,16 @@ const submit = () => {
 };
 onMounted(() => {
   if (store.logged) {
-    axios
-      .get(store.url + "/owner/info")
-      .then((res) => {
-        loading.value = false;
-        if (res.status == 200) {
-          let response = JSON.parse(res.data);
-          form.name = response.name;
-          form.address = response.address;
-          form.phone = response.phone;
-        }
-      })
-      .catch((err) => {
-        loading.value = false;
-        ElMessage.error(err);
-      });
+    axios.get(store.url + "/owner/info").then((res) => {
+      loading.value = false;
+
+      if (res.status == 200) {
+        let response = res.data;
+        form.name = response.name;
+        form.address = response.address;
+        form.phone = response.phone;
+      }
+    });
   }
 });
 </script>

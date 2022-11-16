@@ -9,6 +9,8 @@ export const useStore = defineStore("user", {
       last: null,
       centershow: false,
       name: "顾晨",
+      new: true,
+      finished: false,
       url: "http://localhost:8000",
     };
   },

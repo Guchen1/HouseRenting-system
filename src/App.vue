@@ -5,6 +5,7 @@ import { useAxios } from "./stores/axios";
 import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
 import { ElMessage } from "element-plus";
+
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
@@ -143,23 +144,19 @@ const check = () => {
         if (response.isLogin) {
           vis.value = false;
           store.logged = true;
-          store.identity = !response.identity ? "owner" : "tenant";
+          store.identity = response.identity ? "owner" : "tenant";
           store.name = response.data.name;
           store.centershow = false;
-          router.push("/" + store.identity);
-          bdisabled.value = true;
-          setTimeout(() => {
-            sideshow.value = true;
-            loginfo.username = "";
-            loginfo.password = "";
-          }, 250);
-          setTimeout(() => {
-            bdisabled.value = false;
-          }, 500);
-        } else console.log(response.reason);
+          store.finished = true;
+          sideshow.value = true;
+        } else {
+          store.finished = true;
+        }
       }
     })
-    .catch(() => {});
+    .catch(() => {
+      store.finished = true;
+    });
 };
 
 const go = (path, reg = false) => {
@@ -226,13 +223,35 @@ async function particlesInit(engine) {
   await loadFull(engine);
 }
 router.beforeEach((to, from, next) => {
-  if (!store.logged && to.path != "/") {
-    next("/");
+  console.log(to);
+  if (store.new) {
+    const a = setInterval(() => {
+      if (store.finished)
+        if (!store.logged && to.path != "/") {
+          store.new = false;
+          clearInterval(a);
+          next("/");
+        } else {
+          if (to.path.search(store.identity) == -1 && store.identity != null) {
+            clearInterval(a);
+            store.new = false;
+            next("/" + store.identity);
+          } else {
+            clearInterval(a);
+            store.new = false;
+            next();
+          }
+        }
+    }, 10);
   } else {
-    if (to.path.search(store.identity) == -1 && store.identity != null) {
-      next("/" + store.identity);
+    if (!store.logged && to.path != "/") {
+      next("/");
     } else {
-      next();
+      if (to.path.search(store.identity) == -1 && store.identity != null) {
+        next("/" + store.identity);
+      } else {
+        next();
+      }
     }
   }
 });

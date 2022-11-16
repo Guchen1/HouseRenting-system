@@ -4,13 +4,13 @@
       style="min-height: 200px"
       v-loading="loading"
       element-loading-text="加载中"
-      :data="tableData"
+      :data="tableData.concat(form)"
       stripe
     >
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="address" label="地址" />
       <el-table-column prop="total" label="可租人数" />
-      <el-table-column prop="avai" label="已租人数" />
+      <el-table-column prop="rent" label="已租人数" />
       <el-table-column prop="price" label="价格" />
       <el-table-column label="操作"
         ><template #default="scope">
@@ -23,7 +23,9 @@
               visible = true;
             "
             >修改</el-button
-          ><el-button link type="danger" size="small">删除</el-button>
+          ><el-button link type="danger" size="small" @click="del(scope.row.id)"
+            >删除</el-button
+          >
         </template></el-table-column
       >
     </el-table>
@@ -51,13 +53,14 @@ const visible = ref(false);
 const id = ref("");
 const axios = useAxios();
 const loading = ref(true);
+defineProps(["form"]);
 const tableData = reactive([
   {
     id: "1",
     name: "西电南校区",
     address: "西安市长安区西沣路",
     total: 5000,
-    avai: 30,
+    rent: 30,
     price: 1000,
   },
   {
@@ -65,10 +68,30 @@ const tableData = reactive([
     name: "西电北校区",
     address: "西安市雁塔区太白南路",
     total: 3000,
-    avai: 30,
+    rent: 30,
     price: 1500,
   },
 ]);
+const del = (id) => {
+  axios
+    .post("/owner/housedel", { id: id })
+    .then((res) => {
+      if (res.data.code == 200) {
+        for (let item in tableData) {
+          if (tableData[item].id == id) {
+            tableData.splice(item, 1);
+            break;
+          }
+        }
+        ElMessage.success("删除成功");
+      } else {
+        ElMessage.error("删除失败");
+      }
+    })
+    .catch(() => {
+      ElMessage.error("删除失败");
+    });
+};
 onMounted(() => {
   axios
     .get(store.url + "/owner/houseinfo")

@@ -48,18 +48,7 @@
       ><el-button type="primary" @click="submit">提交</el-button
       ><el-button
         type="danger"
-        @click="
-          id == undefined
-            ? (form = {
-                name: '',
-                address: '',
-                total: 0,
-                rent: 0,
-                price: 0,
-                description: '',
-              })
-            : emit('exit')
-        "
+        @click="id == undefined ? clear() : emit('exit')"
         >{{ id == undefined ? "清空" : "返回" }}</el-button
       ></el-space
     >
@@ -73,7 +62,7 @@ import { useStore } from "@/stores/user.js";
 import { ElMessage } from "element-plus";
 const axios = useAxios();
 const store = useStore();
-const emit = defineEmits(["exit"]);
+const emit = defineEmits(["exit", "add"]);
 const props = defineProps(["id"]);
 const form = reactive({
   name: "",
@@ -83,12 +72,31 @@ const form = reactive({
   price: 0,
   description: "",
 });
+const clear = () => {
+  form.name = "";
+  form.address = "";
+  form.total = 0;
+  form.rent = 0;
+  form.price = 0;
+  form.description = "";
+};
 const submit = () => {
   if (props.id == undefined) {
+    if (
+      form.name == "" ||
+      form.address == "" ||
+      form.total == 0 ||
+      form.price == 0 ||
+      form.description == ""
+    ) {
+      ElMessage.error("请填写完整信息");
+      return;
+    }
     axios
       .post(store.url + "/owner/houseinfo?op=1", form)
       .then((res) => {
-        if (res.code == 200) {
+        if (res.status == 200) {
+          emit("add", JSON.parse(JSON.stringify(form)));
           form.name = "";
           form.address = "";
           form.total = 0;
@@ -106,7 +114,7 @@ const submit = () => {
     axios
       .post(store.url + "/owner/houseinfo?op=2", form)
       .then((res) => {
-        if (res.code == 200) {
+        if (res.status == 200) {
           emit("exit");
           ElMessage.success("修改成功");
         }
@@ -123,13 +131,14 @@ onMounted(() => {
       .get(store.url + "/owner/houseinfo?id=" + props.id)
       .then((res) => {
         if (res.status == 200) {
-          let data = res.data;
-          form.name = data.name;
-          form.address = data.address;
-          form.total = data.total;
-          form.rent = data.rent;
-          form.price = data.price;
-          form.description = data.description;
+          let response = res.data[0];
+          form.name = response.name;
+          console.log(response.name);
+          form.address = response.address;
+          form.total = response.total;
+          form.rent = response.rent;
+          form.price = response.price;
+          form.description = response.description;
         }
       })
       .catch(() => {

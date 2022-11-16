@@ -244,11 +244,12 @@ router.beforeEach((to, from, next) => {
           } else {
             clearInterval(a);
             console.log(sideshow);
-            setTimeout(() => {
-              sideshow.value = true;
-              loginfo.username = "";
-              loginfo.password = "";
-            }, 250);
+            if (to.path != "/")
+              setTimeout(() => {
+                sideshow.value = true;
+                loginfo.username = "";
+                loginfo.password = "";
+              }, 250);
             store.new = false;
             next();
           }

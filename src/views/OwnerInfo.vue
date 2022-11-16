@@ -34,11 +34,17 @@ const submit = () => {
         ElMessage.error(err);
       });
   else
-    axios.post(store.url + "/owner/update", form).then((res) => {
-      if (res.status == 200) {
-        ElMessage.success("修改成功");
-      }
-    });
+    axios
+      .post(store.url + "/owner/update", form)
+      .then((res) => {
+        if (res.status == 200 && res.data.isSuccese) {
+          ElMessage.success("修改成功");
+        } else if (res.status == 200) throw "修改失败";
+        else throw "网络错误";
+      })
+      .catch((e) => {
+        ElMessage.error(e);
+      });
 };
 onMounted(() => {
   if (store.logged) {

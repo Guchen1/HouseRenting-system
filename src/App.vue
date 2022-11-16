@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from "vue-router";
-import { ref, onMounted, watch, reactive } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useAxios } from "./stores/axios";
 import { useStore } from "./stores/user.js";
 import { loadFull } from "tsparticles";
@@ -284,13 +284,15 @@ check();
     </Transition>
     <el-container style="height: 100%">
       <el-header class="header">
-        <div class="center">房屋租赁服务系统</div>
+        <div style="font-size: 20px" class="center">房屋租赁服务系统</div>
         <el-button
           type="success"
           @click="vis = true"
           class="right"
           v-if="!store.logged"
           :disabled="bdisabled"
+          size="large"
+          link
           >登录
         </el-button>
         <el-button
@@ -298,7 +300,9 @@ check();
           class="right"
           @click="logout"
           :disabled="bdisabled"
+          size="large"
           v-else
+          link
           >注销</el-button
         >
       </el-header>
@@ -457,7 +461,7 @@ check();
 
 .right {
   float: right;
-  margin-top: 13px;
+  margin-top: 20px;
   margin-right: 5%;
 }
 

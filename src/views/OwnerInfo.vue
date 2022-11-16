@@ -1,13 +1,12 @@
 <script setup>
 import { reactive, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+
 import { useAxios } from "../stores/axios";
 import { useStore } from "../stores/user";
 import { ElMessage } from "element-plus";
 const emit = defineEmits(["exit", "registered"]);
 // do not use same name with ref
 const store = useStore();
-const router = useRouter();
 const loading = ref(true);
 const axios = useAxios();
 const form = reactive({

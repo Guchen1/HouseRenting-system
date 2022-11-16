@@ -84,7 +84,7 @@ onMounted(() => {
             <el-input v-model="form.name" /> </el-form-item></el-col
         ><el-col :span="8">
           <el-form-item label="性别"
-            ><el-select v-model="form.sex"
+            ><el-select v-model="form.sex" style="width: 100%"
               ><el-option label="男" :value="true"></el-option
               ><el-option
                 label="女"
@@ -93,6 +93,7 @@ onMounted(() => {
         ><el-col :span="8">
           <el-form-item label="出生日期">
             <el-date-picker
+              style="width: 100%"
               v-model="form.birth"
               type="date"
             ></el-date-picker> </el-form-item></el-col

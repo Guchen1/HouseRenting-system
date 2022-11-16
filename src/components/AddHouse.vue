@@ -13,6 +13,11 @@
           ><el-form-item label="可租"
             ><el-input
               onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"
+              @change="
+                () => {
+                  form.total = parseInt(form.total);
+                }
+              "
               min="0"
               step="1"
               v-model="form.total"
@@ -25,11 +30,24 @@
               min="0"
               step="1"
               v-model="form.rent"
+              @change="
+                () => {
+                  form.rent = parseInt(form.rent);
+                }
+              "
               type="number"
             ></el-input></el-form-item></el-col
         ><el-col :span="6" :xl="6" :s="4"
           ><el-form-item label="价格"
-            ><el-input v-model="form.price" type="number">
+            ><el-input
+              v-model="form.price"
+              @change="
+                () => {
+                  form.price = parseFloat(form.price);
+                }
+              "
+              type="number"
+            >
               <template #append>元/月</template></el-input
             >
           </el-form-item></el-col

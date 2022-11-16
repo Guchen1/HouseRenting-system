@@ -74,7 +74,7 @@ const tableData = reactive([
 ]);
 const del = (id) => {
   axios
-    .post("/owner/housedel", { id: id })
+    .post(store.url + "/owner/housedels", { id: id })
     .then((res) => {
       if (res.data.code == 200) {
         for (let item in tableData) {

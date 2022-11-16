@@ -140,7 +140,6 @@ const check = () => {
     .then((res) => {
       if (res.status == 200) {
         let response = res.data;
-        console.log(response.reason);
         if (response.isLogin) {
           vis.value = false;
           store.logged = true;
@@ -169,7 +168,6 @@ const go = (path, reg = false) => {
           if (!response.isLogin) {
             ElMessage.error(response.reason);
           } else {
-            console.log(res.data);
             vis.value = false;
             store.logged = true;
             store.identity = response.identity == "1" ? "owner" : "tenant";
@@ -223,7 +221,6 @@ async function particlesInit(engine) {
   await loadFull(engine);
 }
 router.beforeEach((to, from, next) => {
-  console.log(to);
   if (store.new) {
     const a = setInterval(() => {
       if (store.finished)
@@ -243,7 +240,7 @@ router.beforeEach((to, from, next) => {
             next("/" + store.identity);
           } else {
             clearInterval(a);
-            console.log(sideshow);
+
             if (to.path != "/")
               setTimeout(() => {
                 sideshow.value = true;
@@ -257,6 +254,7 @@ router.beforeEach((to, from, next) => {
     }, 10);
   } else {
     if (!store.logged && to.path != "/") {
+      console.log("ss");
       next("/");
     } else {
       if (to.path.search(store.identity) == -1 && store.identity != null) {

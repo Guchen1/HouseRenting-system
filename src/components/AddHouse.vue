@@ -91,11 +91,15 @@ const submit = () => {
     ) {
       ElMessage.error("请填写完整信息");
       return;
+    } else if (form.rent > form.total) {
+      ElMessage.error("已租数量不能大于可租数量");
+      return;
     }
     axios
       .post(store.url + "/owner/houseinfo?op=1", form)
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status == 200 && res.data.isSuccess) {
+          form.id = res.data.id;
           emit("add", JSON.parse(JSON.stringify(form)));
           form.name = "";
           form.address = "";
@@ -104,7 +108,7 @@ const submit = () => {
           form.price = 0;
           form.description = "";
           ElMessage.success("添加成功");
-        }
+        } else throw "失败";
       })
       .catch(() => {
         ElMessage.error("添加失败");
@@ -133,7 +137,6 @@ onMounted(() => {
         if (res.status == 200) {
           let response = res.data[0];
           form.name = response.name;
-          console.log(response.name);
           form.address = response.address;
           form.total = response.total;
           form.rent = response.rent;

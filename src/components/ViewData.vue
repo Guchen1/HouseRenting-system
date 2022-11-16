@@ -4,7 +4,7 @@
       style="min-height: 200px"
       v-loading="loading"
       element-loading-text="加载中"
-      :data="tableData.concat(form)"
+      :data="tableData"
       stripe
     >
       <el-table-column prop="name" label="名称" />
@@ -43,7 +43,7 @@
 </template>
 <script setup>
 //TODO:interface
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import AddHouse from "@/components/AddHouse.vue";
 import { useAxios } from "../stores/axios";
 import { ElMessage } from "element-plus";
@@ -53,30 +53,16 @@ const visible = ref(false);
 const id = ref("");
 const axios = useAxios();
 const loading = ref(true);
-defineProps(["form"]);
-const tableData = reactive([
-  {
-    id: "1",
-    name: "西电南校区",
-    address: "西安市长安区西沣路",
-    total: 5000,
-    rent: 30,
-    price: 1000,
-  },
-  {
-    id: "2",
-    name: "西电北校区",
-    address: "西安市雁塔区太白南路",
-    total: 3000,
-    rent: 30,
-    price: 1500,
-  },
-]);
+const props = defineProps(["form"]);
+watch(props.form, () => {
+  tableData.push(props.form);
+});
+const tableData = reactive([]);
 const del = (id) => {
   axios
     .post(store.url + "/owner/housedels", { id: id })
     .then((res) => {
-      if (res.data.code == 200) {
+      if (res.status == 200 && res.data.isSuccess) {
         for (let item in tableData) {
           if (tableData[item].id == id) {
             tableData.splice(item, 1);

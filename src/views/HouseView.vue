@@ -4,7 +4,13 @@
     <AddHouse
       @add="
         (x) => {
-          form.push(x);
+          form.id = x.id;
+          form.name = x.name;
+          form.address = x.address;
+          form.price = x.price;
+          form.total = x.total;
+          form.rent = x.rent;
+          form.description = x.description;
         }
       "
     />
@@ -18,5 +24,5 @@
 import { reactive } from "vue";
 import ViewData from "@/components/ViewData.vue";
 import AddHouse from "../components/AddHouse.vue";
-const form = reactive([]);
+const form = reactive({});
 </script>

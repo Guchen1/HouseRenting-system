@@ -180,6 +180,11 @@ const go = (path, reg = false) => {
             setTimeout(() => {
               bdisabled.value = false;
             }, 500);
+            setTimeout(() => {
+              sideshow.value = true;
+              loginfo.username = "";
+              loginfo.password = "";
+            }, 250);
           }
         } else {
           ElMessage.error("疑似网络错误");
@@ -230,9 +235,15 @@ router.beforeEach((to, from, next) => {
           if (to.path.search(store.identity) == -1 && store.identity != null) {
             clearInterval(a);
             store.new = false;
+            setTimeout(() => {
+              sideshow.value = true;
+              loginfo.username = "";
+              loginfo.password = "";
+            }, 250);
             next("/" + store.identity);
           } else {
             clearInterval(a);
+            console.log(sideshow);
             setTimeout(() => {
               sideshow.value = true;
               loginfo.username = "";

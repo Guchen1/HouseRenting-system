@@ -18,6 +18,19 @@ const loginfo = reactive({
 });
 const sideshow = ref(false);
 const vis = ref(false);
+const logout = () => {
+  axios
+    .get(store.url + "/logout")
+    .then((res) => {
+      if (res.status == 200) {
+        ElMessage.success("注销成功");
+        back();
+      }
+    })
+    .catch((err) => {
+      ElMessage.error(err);
+    });
+};
 onMounted(() => {
   detect();
   window.addEventListener("resize", detect);
@@ -254,7 +267,7 @@ check();
         <el-button
           type="danger"
           class="right"
-          @click="back"
+          @click="logout"
           :disabled="bdisabled"
           v-else
           >注销</el-button

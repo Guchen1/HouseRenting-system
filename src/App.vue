@@ -178,11 +178,6 @@ const go = (path, reg = false) => {
             router.push("/" + store.identity);
             bdisabled.value = true;
             setTimeout(() => {
-              sideshow.value = true;
-              loginfo.username = "";
-              loginfo.password = "";
-            }, 250);
-            setTimeout(() => {
               bdisabled.value = false;
             }, 500);
           }
@@ -238,6 +233,11 @@ router.beforeEach((to, from, next) => {
             next("/" + store.identity);
           } else {
             clearInterval(a);
+            setTimeout(() => {
+              sideshow.value = true;
+              loginfo.username = "";
+              loginfo.password = "";
+            }, 250);
             store.new = false;
             next();
           }

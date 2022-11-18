@@ -4,7 +4,7 @@
     <el-form :inline="true" style="display: flex; justify-content: center">
       <el-form-item label="关键词搜索"><el-input></el-input></el-form-item>
       <el-form-item label="租金区间"
-        ><el-space><el-input></el-input>--<el-input></el-input></el-space
+        ><el-space><el-input></el-input>-<el-input></el-input></el-space
       ></el-form-item>
 
       <el-form-item label="排序"><el-select></el-select></el-form-item>

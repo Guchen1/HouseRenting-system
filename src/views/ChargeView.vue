@@ -22,13 +22,7 @@ import { ElMessage, ElLoading } from "element-plus";
 const store = useStore();
 const axios = useAxios();
 const loading = ref(true);
-const data = reactive([
-  {
-    id: 0,
-    name: "西电南校区",
-    price: 0,
-  },
-]);
+const data = reactive([]);
 const pay = (idx) => {
   const loading = ElLoading.service({
     lock: true,
@@ -37,7 +31,7 @@ const pay = (idx) => {
   axios
     .post(store.url + "/pay", { id: idx })
     .then((res) => {
-      if (res.status == 200) {
+      if (res.status == 200 && res.data.isSuccess) {
         ElMessage.success("支付成功");
         for (let item in data) {
           if (data[item].id == idx) {
@@ -46,7 +40,7 @@ const pay = (idx) => {
           }
         }
         loading.close();
-      }
+      } else throw Error;
     })
     .catch(() => {
       ElMessage.error("支付失败");
@@ -57,7 +51,7 @@ onMounted(() => {
   axios
     .get(store.url + "/" + store.identity + "/payinfo")
     .then((res) => {
-      if (res.status == 200) {
+      if (res.status == 200 && !res.data.isSuccess) {
         let response = res.data;
         response.forEach((item) => {
           data.push(item);

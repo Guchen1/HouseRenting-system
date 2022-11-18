@@ -34,7 +34,7 @@ const submit = () => {
     axios
       .post(store.url + "/tenant/update", form)
       .then((res) => {
-        if (res.status == 200 && res.data.isSuccese) {
+        if (res.status == 200 && res.data.isSuccess) {
           ElMessage.success("修改成功");
         } else if (res.status == 200) throw "修改失败";
         else throw "网络错误";

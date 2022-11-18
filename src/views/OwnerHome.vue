@@ -38,6 +38,7 @@ onMounted(() => {
       if (res.status == 200) {
         let response = res.data;
         loading.value = false;
+        s.value = 0;
         new Chart(document.getElementById("myChart"), {
           type: "doughnut",
           options: {

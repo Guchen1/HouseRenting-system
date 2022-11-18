@@ -81,7 +81,7 @@ const ok = (scope, id) => {
   axios
     .post(store.url + "/owner/confirm", { id: id, state: true })
     .then((res) => {
-      if (res.status == 200) {
+      if (res.status == 200 && res.data.isSuccess) {
         tableData.splice(scope.$index, 1);
         let i;
         for (i in wholeData) {
@@ -105,7 +105,7 @@ const nook = (scope, id) => {
   axios
     .post(store.url + "/owner/confirm", { id: id, state: false })
     .then((res) => {
-      if (res.status == 200) {
+      if (res.status == 200 && res.data.isSuccess) {
         tableData.splice(scope.$index, 1);
         ElMessage.success("操作成功");
       } else {
@@ -121,7 +121,7 @@ const del = (_scope, id) => {
   axios
     .post(store.url + "/owner/cancel", request)
     .then((res) => {
-      if (res.status == 200) {
+      if (res.status == 200 && res.data.isSuccess) {
         wholeData.forEach((item) => {
           let i;
           for (i in item.children) {
@@ -140,23 +140,8 @@ const del = (_scope, id) => {
       ElMessage.error("退租失败");
     });
 };
-const tableData = reactive([
-  {
-    id: "1",
-    name: "西电南校区",
-    tenant: "陈松泽",
-    phone: "12345678901",
-  },
-]);
-const wholeData = reactive([
-  {
-    name: "西电南校区",
-    children: [
-      { id: "11", tenant: "魏英豪", phone: "12345678901" },
-      { id: "12", tenant: "顾晨", phone: "18796157196" },
-    ],
-  },
-]);
+const tableData = reactive([]);
+const wholeData = reactive([]);
 onMounted(() => {
   axios
     .get(store.url + "/owner/opinfo")

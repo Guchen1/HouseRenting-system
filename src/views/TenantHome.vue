@@ -20,9 +20,8 @@
 #outer {
   display: flow-root;
   height: 100%;
-  width: 100%;
+
   padding-left: 15px;
-  padding-right: 15px;
 }
 </style>
 <script setup>

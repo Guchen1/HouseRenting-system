@@ -88,7 +88,7 @@ onMounted(() => {
         response.forEach((element) => {
           tableData.push(element);
         });
-      } else ElMessage.error("获取房屋信息失败");
+      } else throw "false";
     })
     .catch(() => {
       loading.value = false;
